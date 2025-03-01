@@ -14,7 +14,11 @@ export const setupTokenRefresh = async (isAdmin = false) => {
       throw new Error('No ID token available');
     }
 
-    const apiUrl = '/.netlify/functions/api/createCustomToken';
+    // Use Netlify Functions URL instead of Firebase Functions
+    const apiUrl = process.env.NODE_ENV === 'development'
+      ? 'http://localhost:8888/.netlify/functions/api/createCustomToken'
+      : '/.netlify/functions/api/createCustomToken';
+
     console.log('Requesting custom token from:', apiUrl);
 
     const response = await fetch(apiUrl, {

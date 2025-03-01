@@ -13,3 +13,10 @@
   to = "/.netlify/functions/api/:splat"
   status = 200
   force = true
+
+[dev]
+  command = "npm run start"
+  port = 8000        # Changed from 8888
+  targetPort = 3000  # Your React app port
+  publish = "build"
+  functionsPort = 9999  # Port for Netlify Functions

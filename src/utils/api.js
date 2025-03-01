@@ -1,5 +1,5 @@
 const API_BASE = process.env.NODE_ENV === 'development'
-  ? 'http://localhost:8888/.netlify/functions/api'
+  ? 'http://localhost:8000/.netlify/functions/api'
   : '/.netlify/functions/api';
 
 export const callApi = async (endpoint, options = {}) => {

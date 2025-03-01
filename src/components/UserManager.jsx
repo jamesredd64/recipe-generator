@@ -48,21 +48,28 @@ function UserManager() {
 
     setLoading(true);
     try {
-      const response = await fetch('/api/getUserByEmail', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email }),
-      });
-
-      if (!response.ok) {
-        throw new Error('User not found');
-      }
+      const response = await fetch(
+        process.env.NODE_ENV === 'development'
+          ? 'http://localhost:8000/.netlify/functions/api/getUserByEmail'
+          : '/.netlify/functions/api/getUserByEmail',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email }),
+        }
+      );
 
       const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to fetch user');
+      }
+
       setUserData(data);
     } catch (error) {
+      console.error('Search error:', error); // Debug log
       toast({
         title: 'Error',
         description: error.message,

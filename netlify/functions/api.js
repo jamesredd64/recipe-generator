@@ -1,34 +1,38 @@
 import express from 'express';
 import serverless from 'serverless-http';
 import cors from 'cors';
-import { initializeApp, getApps, cert } from 'firebase-admin/app';
-import { getAuth } from 'firebase-admin/auth';
+import { adminAuth } from '../../src/config/firebase-admin.js';
 
 const app = express();
-
-// Initialize Firebase Admin if not already initialized
-if (!getApps().length) {
-  initializeApp({
-    credential: cert({
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-    }),
-  });
-}
-
-const adminAuth = getAuth();
 
 app.use(cors({
   origin: process.env.NODE_ENV === 'development'
     ? 'http://localhost:3000'
-    : 'https://your-netlify-site.netlify.app',
+    : ['https://recipe-generator-ai-jr.netlify.app'],
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
 app.use(express.json());
+
+app.post('/getUserByEmail', async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required' });
+    }
+
+    console.log('Searching for user with email:', email); // Debug log
+
+    const userRecord = await adminAuth.getUserByEmail(email);
+    console.log('User found:', userRecord.toJSON()); // Debug log
+
+    res.json(userRecord.toJSON());
+  } catch (error) {
+    console.error('Error fetching user:', error); // Debug log
+    res.status(404).json({ error: 'User not found' });
+  }
+});
 
 app.post('/api/createCustomToken', async (req, res) => {
   try {

@@ -1,7 +1,4 @@
 {
-  "functions": {
-    "source": "functions"
-  },
   "hosting": {
     "public": "build",
     "ignore": [
@@ -11,26 +8,16 @@
     ],
     "rewrites": [
       {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ],
-    "headers": [
+        "source": "/.netlify/functions/**",
+        "destination": "https://your-netlify-site.netlify.app/.netlify/functions/**"
+      },
       {
         "source": "**",
-        "headers": [
-          {
-            "key": "Access-Control-Allow-Origin",
-            "value": "*"
-          }
-        ]
+        "destination": "/index.html"
       }
     ]
   },
   "emulators": {
-    "functions": {
-      "port": 5001
-    },
     "hosting": {
       "port": 5002
     },

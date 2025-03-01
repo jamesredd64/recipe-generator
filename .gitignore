@@ -11,6 +11,11 @@
 # production
 /build
 
+# Netlify
+.netlify
+netlify/functions-internal
+netlify/functions-serve
+
 # misc
 .DS_Store
 .env
@@ -18,6 +23,7 @@
 .env.development.local
 .env.test.local
 .env.production.local
+.env.netlify
 
 # debug logs
 npm-debug.log*
