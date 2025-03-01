@@ -1,0 +1,4 @@
+root: C:\Users\james\OneDrive\Desktop\react-app-firebase\my-react 
+path: C:\Program Files\nodejs 
+arch: 64 
+proxy: none

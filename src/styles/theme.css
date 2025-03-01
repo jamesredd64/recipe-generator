@@ -1,0 +1,184 @@
+/* Base styles */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  height: 100vh;
+}
+
+/* Browser-specific autofill styles */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--chakra-colors-white);
+  -webkit-box-shadow: 0 0 0px 1000px var(--chakra-colors-midnight-500) inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Button Styles */
+.button {
+  background-color: var(--button-background);
+  color: var(--button-text);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.button:hover {
+  background-color: var(--button-hover);
+  transform: translateY(-1px);
+}
+
+.button:active {
+  transform: translateY(0);
+}
+
+/* Input Styles */
+
+.input:-internal-autofill-selected {
+  background-color: var(text-font) !important;
+  color: var(--text-font) !important;
+}
+
+input:-webkit-autofill {
+  background-color: #F7F7F7; /* Change this to your desired color */
+  color: var(--text-primary) !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+input {
+  background-color: var(--input-background) !important;
+  color: var(--text-font) !important;
+  border: 1px solid var(--border-color) !important;
+  padding: 8px 12px !important;
+  border-radius: 4px !important;
+  outline: none !important;
+}
+
+input:focus {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 2px var(--accent-alpha) !important;
+  color: var(--text-font) !important;
+  /* background-color: var(--input-background) !important; */
+}
+
+input::placeholder {
+  color: var(--text-secondary) !important;
+  opacity: 0.7;
+}
+
+/* Link Styles */
+a {
+  color: var(--link-color);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Card/Container Styles */
+.card {
+  background-color: var(--background) !important;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+ 
+}
+
+/* Selection Style */
+::selection {
+  background-color: var(--selection);
+  color: var(--foreground);
+}
+
+.parallax-container {
+  height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  perspective: 1px;
+  perspective-origin: 0 0;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
+
+.parallax-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('../assets/recipe-2.webp');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.9; 
+  background-color: "tansparent" !important;
+  max-width: 100% !important;
+  z-index: -1;
+}
+
+.body {
+  position: relative;
+  z-index: 1;
+  /* background: rgba(1, 74, 91, 0.85) !important; Semi-transparent background */
+  min-height: 100vh;
+  padding-bottom: 4rem;
+  transform: translateZ(0);
+}
+
+.parallax-content {
+  position: relative;
+  padding: 20vh 0;
+  text-align: center;
+}
+
+/* Optional: Add a container class for sign-in/sign-up pages */
+.auth-container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-height: 100vh;
+  background: rgba(1, 74, 91, 0.85) !important;
+}
+
+/* Add these styles for Material-UI TextField components */
+.MuiTextField-root {
+  background-color: var(--input-background) !important;
+  border-radius: 4px !important;
+}
+
+.MuiInputLabel-root.Mui-focused {
+  transform: translate(12px, 4px) scale(0.75) !important;
+}
+
+.MuiInputLabel-root.MuiInputLabel-shrink {
+  transform: translate(12px, 4px) scale(0.75) !important;
+}
+
+.MuiFilledInput-root {
+  background-color: transparent !important;
+}
+
+.MuiFilledInput-root:hover {
+  background-color: transparent !important;
+}
+
+.MuiFilledInput-root.Mui-focused {
+  background-color: transparent !important;
+}
+
+/* Ensure proper contrast for the label text */
+.MuiInputLabel-root {
+  color: var(--text-primary) !important;
+  background-color: transparent !important;
+  padding: 0 4px !important;
+}
