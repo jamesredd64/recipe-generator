@@ -1,25 +1,24 @@
-import React, { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebaseConfig";
-import { useNavigate } from "react-router-dom";
-import {  
+import React, { useState } from 'react';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebaseConfig';
+import { useNavigate } from 'react-router-dom';
+import {
   Container,
   Card,
   CardBody,
   Input,
   Button,
   VStack,
-  Heading,  
+  Heading,
   Alert,
   AlertIcon,
   FormControl,
   FormLabel,
-  Box,
-} from "@chakra-ui/react";
+} from '@chakra-ui/react';
 
 function SignIn() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -27,11 +26,30 @@ function SignIn() {
   const handleSignIn = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
+
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate("/");
+      navigate('/');
     } catch (error) {
-      setError(error.message);
+      let errorMessage = 'An error occurred during sign in';
+      switch (error.code) {
+        case 'auth/invalid-email':
+          errorMessage = 'Invalid email address';
+          break;
+        case 'auth/user-disabled':
+          errorMessage = 'This account has been disabled';
+          break;
+        case 'auth/user-not-found':
+          errorMessage = 'No account found with this email';
+          break;
+        case 'auth/wrong-password':
+          errorMessage = 'Incorrect password';
+          break;
+        default:
+          errorMessage = error.message;
+      }
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -57,85 +75,41 @@ function SignIn() {
                 Sign in to your account
               </Heading>
 
-              <FormControl>
-                <FormLabel color="gray.300">Email</FormLabel>
-                <Box
-                  sx={{
-                    '& input:-webkit-autofill': {
-                      '-webkit-box-shadow': '0 0 0 1000px #122d42 inset',
-                      '-webkit-text-fill-color': 'white',
-                    },
-                    '& input:-webkit-autofill:focus': {
-                      '-webkit-box-shadow': '0 0 0 1000px #122d42 inset',
-                      '-webkit-text-fill-color': 'white',
-                    },
-                  }}
-                >
-                  <Input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email"
-                    required
-                    size="lg"
-                    bg="licorice.300"
-                    _placeholder={{ color: 'gray.500' }}
-                    _hover={{ bg: 'licorice.300' }}
-                    _focus={{ 
-                      bg: 'licorice.300',
-                      borderColor: 'chestnut.600'
-                    }}
-                  />
-                </Box>
+              <FormControl isRequired>
+                <FormLabel color="white">Email</FormLabel>
+                <Input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  bg="white"
+                  color="black"
+                />
               </FormControl>
 
-              <FormControl>
-                <FormLabel color="gray.300">Password</FormLabel>
-                <Box
-                  sx={{
-                    '& input:-webkit-autofill': {
-                      '-webkit-box-shadow': '0 0 0 1000px #122d42 inset',
-                      '-webkit-text-fill-color': 'white',
-                    },
-                    '& input:-webkit-autofill:focus': {
-                      '-webkit-box-shadow': '0 0 0 1000px #122d42 inset',
-                      '-webkit-text-fill-color': 'white',
-                    },
-                  }}
-                >
-                  <Input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter your password"
-                    required
-                    size="lg"
-                    bg="licorice.300"
-                    _placeholder={{ color: 'gray.500' }}
-                    _hover={{ bg: 'licorice.300' }}
-                    _focus={{ 
-                      bg: 'licorice.300',
-                      borderColor: 'chestnut.600'
-                    }}
-                  />
-                </Box>
+              <FormControl isRequired>
+                <FormLabel color="white">Password</FormLabel>
+                <Input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter your password"
+                  bg="white"
+                  color="black"
+                />
               </FormControl>
 
               <Button
                 type="submit"
+                colorScheme="blue"
                 width="full"
-                size="lg"
                 isLoading={loading}
-                loadingText="Signing in"
-                colorScheme="chestnut"
-                bg="chestnut.600"
-                _hover={{ bg: 'chestnut.700' }}
               >
                 Sign In
               </Button>
 
               {error && (
-                <Alert status="error" borderRadius="md">
+                <Alert status="error">
                   <AlertIcon />
                   {error}
                 </Alert>

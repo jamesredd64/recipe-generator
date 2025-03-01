@@ -1,43 +1,73 @@
 import express from 'express';
 import serverless from 'serverless-http';
 import cors from 'cors';
-import { auth } from '../../src/firebaseConfig.jsx';
+import { initializeApp, getApps, cert } from 'firebase-admin/app';
+import { getAuth } from 'firebase-admin/auth';
 
 const app = express();
 
-// Middleware
-app.use(cors());
+// Initialize Firebase Admin if not already initialized
+if (!getApps().length) {
+  initializeApp({
+    credential: cert({
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+    }),
+  });
+}
+
+const adminAuth = getAuth();
+
+app.use(cors({
+  origin: process.env.NODE_ENV === 'development'
+    ? 'http://localhost:3000'
+    : 'https://your-netlify-site.netlify.app',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
 app.use(express.json());
 
-// Health check endpoint
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok' });
-});
-
-// Protected route example
-app.get('/api/protected', async (req, res) => {
+app.post('/api/createCustomToken', async (req, res) => {
   try {
     const authHeader = req.headers.authorization;
-    if (!authHeader) {
-      return res.status(401).json({ error: 'No authorization header' });
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      console.log('Missing or invalid authorization header');
+      return res.status(401).json({ error: 'Unauthorized - Invalid header' });
     }
 
-    const token = authHeader.split('Bearer ')[1];
-    if (!token) {
-      return res.status(401).json({ error: 'No token provided' });
-    }
+    const idToken = authHeader.split('Bearer ')[1];
+    console.log('Received token verification request');
 
-    // Verify Firebase token
-    const decodedToken = await auth.verifyIdToken(token);
-    res.json({
-      message: 'Protected data',
-      user: decodedToken.email
-    });
+    try {
+      const decodedToken = await adminAuth.verifyIdToken(idToken);
+      console.log('Token verified successfully for user:', decodedToken.uid);
+
+      const additionalClaims = {
+        isAdmin: req.body?.isAdmin || false,
+        email: decodedToken.email || '',
+      };
+
+      const customToken = await adminAuth.createCustomToken(decodedToken.uid, additionalClaims);
+      console.log('Custom token created successfully');
+
+      return res.json({ token: customToken });
+    } catch (verifyError) {
+      console.error('Token verification failed:', verifyError);
+      return res.status(401).json({
+        error: 'Invalid token',
+        details: verifyError.message
+      });
+    }
   } catch (error) {
-    res.status(401).json({ error: 'Invalid token' });
+    console.error('Server error:', error);
+    return res.status(500).json({
+      error: 'Internal server error',
+      details: error.message
+    });
   }
 });
-
-// Your other API routes go here
 
 export const handler = serverless(app);

@@ -1,32 +1,66 @@
-import { auth, functions } from '../firebaseConfig.jsx'; // Import your Firebase configuration
-import { httpsCallable } from 'firebase/functions';
+import { auth } from '../firebaseConfig.jsx';
 import { signInWithCustomToken, signOut } from 'firebase/auth';
 
 let tokenRefreshTimeout;
 
 export const setupTokenRefresh = async (isAdmin = false) => {
-  // Clear any existing timeout
   if (tokenRefreshTimeout) {
     clearTimeout(tokenRefreshTimeout);
   }
 
   try {
-    const createCustomToken = httpsCallable(functions, 'createCustomToken');
-    const result = await createCustomToken({ isAdmin });
-    await signInWithCustomToken(auth, result.data.token);
+    const idToken = await auth.currentUser?.getIdToken(true); // Force refresh
+    if (!idToken) {
+      throw new Error('No ID token available');
+    }
 
-    // Set timeout to sign out user after 10 minutes
+    const apiUrl = '/.netlify/functions/api/createCustomToken';
+    console.log('Requesting custom token from:', apiUrl);
+
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${idToken}`,
+      },
+      body: JSON.stringify({ isAdmin }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.details || data.error || `HTTP error! status: ${response.status}`);
+    }
+
+    if (!data.token) {
+      throw new Error('No token received from server');
+    }
+
+    await signInWithCustomToken(auth, data.token);
+    console.log('Successfully signed in with custom token');
+
+    // Set up refresh timeout
     tokenRefreshTimeout = setTimeout(() => {
-      signOut(auth);
-    }, 10 * 60 * 1000); // 10 minutes
+      setupTokenRefresh(isAdmin).catch(console.error);
+    }, 9 * 60 * 1000); // Refresh slightly before expiration
   } catch (error) {
     console.error('Error refreshing token:', error);
+
+    // Don't sign out for network errors
+    if (error.message.includes('Failed to fetch')) {
+      console.log('Network error - will retry on next attempt');
+      return;
+    }
+
+    // For other errors, sign out the user
     await signOut(auth);
+    throw error; // Re-throw to be handled by the caller
   }
 };
 
 export const clearTokenRefresh = () => {
   if (tokenRefreshTimeout) {
     clearTimeout(tokenRefreshTimeout);
+    tokenRefreshTimeout = null;
   }
 };

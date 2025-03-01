@@ -1,9 +1,0 @@
-{
-  "extends": ["google"],
-  "rules": {
-    // Add specific rules to ignore or modify here
-    "indent": "off",
-    "quotes": "off"
-    // Add other rules as needed
-  }
-}

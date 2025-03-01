@@ -23,7 +23,7 @@ import SignIn from './pages/SignIn.jsx';
 import UserManager from './components/UserManager';
 
 // Add DEV_MODE constant
-const DEV_MODE = true; // Set to false to enable authentication
+const DEV_MODE = false; // Set to false to enable authentication
 
 // Modified Protected Route Component
 const ProtectedRoute = ({ children, user }) => {
@@ -42,16 +42,23 @@ const ProtectedRoute = ({ children, user }) => {
 
 function App() {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
-        // Setup token refresh when user signs in
-        await setupTokenRefresh(currentUser.email === 'admin@example.com'); // Replace with your admin check
-      } else {
-        setUser(null);
-        clearTokenRefresh();
+      try {
+        if (currentUser) {
+          setUser(currentUser);
+          // Setup token refresh when user signs in
+          await setupTokenRefresh(currentUser.email === 'admin@example.com');
+        } else {
+          setUser(null);
+          clearTokenRefresh();
+        }
+      } catch (error) {
+        console.error("Auth state change error:", error);
+      } finally {
+        setLoading(false);
       }
     });
 
@@ -60,6 +67,10 @@ function App() {
       clearTokenRefresh();
     };
   }, []);
+
+  if (loading) {
+    return <Box>Loading...</Box>;
+  }
 
   return (
     <ChakraProvider theme={theme}>
