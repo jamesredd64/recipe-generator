@@ -36,4 +36,4 @@ service-Key.json
 users.json
 
 # Netlify
-.netlify
+# .netlify
