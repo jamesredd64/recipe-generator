@@ -14,9 +14,17 @@
   status = 200
   force = true
 
+[build.environment]
+  NODE_VERSION = "18"
+  NPM_VERSION = "9"
+
+[functions]
+  node_bundler = "esbuild"
+  external_node_modules = ["express"]
+
 [dev]
   command = "npm run start"
-  port = 8000        # Changed from 8888
-  targetPort = 3000  # Your React app port
+  port = 8000
+  targetPort = 3000
   publish = "build"
-  functionsPort = 9999  # Port for Netlify Functions
+  functionsPort = 9999
