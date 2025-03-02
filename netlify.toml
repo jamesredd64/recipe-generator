@@ -19,5 +19,26 @@
   node_bundler = "esbuild"
 
 [dev]
-targetPort = 3000
+  targetPort = 3000
   port = 8888
+
+# Development URLs configuration
+[[redirects]]
+  from = "http://localhost:3000/*"
+  to = "/.netlify/identity/:splat"
+  status = 200
+
+[[redirects]]
+  from = "http://127.0.0.1:3000/*"
+  to = "/.netlify/identity/:splat"
+  status = 200
+
+[[headers]]
+  for = "http://localhost:3000/*"
+    [headers.values]
+    Access-Control-Allow-Origin = "http://localhost:3000"
+
+[[headers]]
+  for = "http://127.0.0.1:3000/*"
+    [headers.values]
+    Access-Control-Allow-Origin = "http://127.0.0.1:3000"
