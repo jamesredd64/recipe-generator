@@ -1,6 +1,6 @@
 import { auth } from '../firebaseConfig.jsx';
 import { signInWithCustomToken, signOut } from 'firebase/auth';
-import { API_BASE } from './api';
+import { API_BASE } from './api.js';
 
 let tokenRefreshTimeout;
 
