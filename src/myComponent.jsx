@@ -1,12 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { auth } from "./firebaseConfig";
+import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged
-} from "firebase/auth";
 import {
   Input,
   Text,
@@ -25,23 +18,15 @@ function MyComponent() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(null);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-    });
-    return () => unsubscribe();
-  }, []);
 
   const handleSignUp = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      // Implement Netlify Identity or custom auth here
       setSuccess("Account created successfully!");
       setError(null);
     } catch (error) {
@@ -56,7 +41,7 @@ function MyComponent() {
     e.preventDefault();
     setLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      // Implement Netlify Identity or custom auth here
       setSuccess("Signed in successfully!");
       setError(null);
     } catch (error) {
@@ -64,17 +49,6 @@ function MyComponent() {
       setSuccess(null);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleSignOut = async () => {
-    try {
-      await signOut(auth);
-      setSuccess("Signed out successfully!");
-      setError(null);
-    } catch (error) {
-      setError(error.message);
-      setSuccess(null);
     }
   };
 
@@ -133,17 +107,6 @@ function MyComponent() {
                   Sign In
                 </Button>
               </SimpleGrid>
-
-              {user && (
-                <Button
-                  onClick={handleSignOut}
-                  w="100%"
-                  bg="chestnut.600"
-                  _hover={{ bg: 'chestnut.700' }}
-                >
-                  Sign Out
-                </Button>
-              )}
             </VStack>
           </CardBody>
         </Card>
@@ -160,12 +123,6 @@ function MyComponent() {
             <AlertIcon />
             {success}
           </Alert>
-        )}
-
-        {user && (
-          <Text color="white">
-            Currently signed in as: {user.email}
-          </Text>
         )}
       </VStack>
     </Container>

@@ -1,21 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
-import { signOut, onAuthStateChanged } from 'firebase/auth';
-import { auth } from './firebaseConfig.jsx';
-// import { callApi } from './utils/api';
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import {
   Box,
   Flex,
   Text,
-  Button,
   Container,
-  HStack,
   ChakraProvider,
   Image,
 } from '@chakra-ui/react';
 import theme from './styles/theme';
 import reactLogo from '../src/assets/reactlogo.webp';
-import { setupTokenRefresh, clearTokenRefresh } from './utils/auth';
 
 // Import page components
 import Home from './pages/Home.jsx';
@@ -23,53 +17,7 @@ import SignUp from './pages/SignUp.jsx';
 import SignIn from './pages/SignIn.jsx';
 import UserManager from './components/UserManager';
 
-// Add DEV_MODE constant
-const DEV_MODE = false; // Set to false to enable authentication
-
-// Modified Protected Route Component
-const ProtectedRoute = ({ children, user }) => {
-  if (DEV_MODE) {
-    console.warn(
-      '⚠️ DEV_MODE is enabled - Protected routes are accessible without authentication'
-    );
-    return children;
-  }
-
-  if (!user) {
-    return <Navigate to="/signin" replace />;
-  }
-  return children;
-};
-
 function App() {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      try {
-        if (currentUser) {
-          setUser(currentUser);
-          // Setup token refresh when user signs in
-          await setupTokenRefresh(currentUser.email === 'admin@example.com');
-        } else {
-          setUser(null);
-          clearTokenRefresh();
-        }
-      } catch (error) {
-        console.error("Auth state change error:", error);
-      } finally {
-        setLoading(false);
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  if (loading) {
-    return <Box>Loading...</Box>;
-  }
-
   return (
     <ChakraProvider theme={theme}>
       <Box bg="licorice.500" color="white" minH="100vh">
@@ -90,78 +38,15 @@ function App() {
                     My React App
                   </Text>
                 </Flex>
-
-                <HStack spacing={4}>
-                  {user && <Text mr={2}>Welcome, {user.email}</Text>}
-
-                  <Button
-                    as={Link}
-                    to="/"
-                    variant="ghost"
-                    _hover={{ bg: 'licorice.300' }}
-                  >
-                    Home
-                  </Button>
-
-                  {user ? (
-                    <>
-                      <Button
-                        as={Link}
-                        to="/user-manager"
-                        variant="ghost"
-                        _hover={{ bg: 'licorice.300' }}
-                      >
-                        User Manager
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        onClick={() => signOut(auth)}
-                        _hover={{ bg: 'licorice.300' }}
-                      >
-                        Sign Out
-                      </Button>
-                    </>
-                  ) : (
-                    <>
-                      <Button
-                        as={Link}
-                        to="/signup"
-                        variant="ghost"
-                        _hover={{ bg: 'licorice.300' }}
-                      >
-                        Sign Up
-                      </Button>
-                      <Button
-                        as={Link}
-                        to="/signin"
-                        variant="ghost"
-                        _hover={{ bg: 'licorice.300' }}
-                      >
-                        Sign In
-                      </Button>
-                    </>
-                  )}
-                </HStack>
               </Flex>
             </Container>
           </Box>
-
-          <Container maxW="container.xl" mt={8} pb={8}>
-            <Routes>
-              <Route path="/" element={<Home user={user} />} />
-              <Route path="/signup" element={<SignUp />} />
-              <Route path="/signin" element={<SignIn />} />
-              <Route
-                path="/user-manager"
-                element={
-                  <ProtectedRoute user={user}>
-                    <UserManager />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="*" element={<Navigate to="/" />} />
-            </Routes>
-          </Container>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/signin" element={<SignIn />} />
+            <Route path="/users" element={<UserManager />} />
+          </Routes>
         </BrowserRouter>
       </Box>
     </ChakraProvider>
