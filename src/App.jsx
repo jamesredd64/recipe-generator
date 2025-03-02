@@ -19,7 +19,7 @@ import LogoutButton from './components/LogoutButton';
 import Home from './pages/Home.jsx';
 import SignUp from './pages/SignUp.jsx';
 import SignIn from './pages/SignIn.jsx';
-import UserManager from './components/UserManager';
+// import UserManager from './components/UserManager';
 
 function NavigationBar() {
   const { isAuthenticated } = useAuth();
@@ -43,12 +43,22 @@ function NavigationBar() {
           </Flex>
 
           <HStack spacing={4}>
-            <Button as={Link} to="/" variant="ghost" _hover={{ bg: 'licorice.300' }}>
+            <Button
+              as={Link}
+              to="/"
+              variant="ghost"
+              _hover={{ bg: 'licorice.300' }}
+            >
               Home
             </Button>
             {isAuthenticated ? (
               <>
-                <Button as={Link} to="/users" variant="ghost" _hover={{ bg: 'licorice.300' }}>
+                <Button
+                  as={Link}
+                  to="/home"
+                  variant="ghost"
+                  _hover={{ bg: 'licorice.300' }}
+                >
                   Users
                 </Button>
                 <LogoutButton />
@@ -84,7 +94,7 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/signup" element={<SignUp />} />
               <Route path="/signin" element={<SignIn />} />
-              <Route path="/users" element={<UserManager />} />
+              <Route path="/home" element={<Home />} />
             </Routes>
           </BrowserRouter>
         </Box>
