@@ -1,6 +1,5 @@
-export const API_BASE = process.env.NODE_ENV === 'development'
-  ? 'http://localhost:9999/.netlify/functions/api'
-  : '/.netlify/functions/api';
+// Simplified API configuration - no need to worry about ports
+export const API_BASE = '/.netlify/functions/api';
 
 export const callApi = async (endpoint, options = {}) => {
   try {

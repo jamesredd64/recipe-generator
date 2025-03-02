@@ -1,13 +1,7 @@
 [build]
-  base = ""  # Leave empty to use repository root
   command = "npm run build"
   publish = "build"
   functions = "netlify/functions"
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
 
 [[redirects]]
   from = "/api/*"
@@ -15,17 +9,12 @@
   status = 200
   force = true
 
-[build.environment]
-  NODE_VERSION = "18"
-  NPM_VERSION = "9"
+[[headers]]
+  for = "/*"
+    [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type, Authorization, X-Requested-With"
 
 [functions]
   node_bundler = "esbuild"
-  external_node_modules = ["express"]
-
-[dev]
-  command = "npm run start"
-  port = 9999
-  targetPort = 3000
-  publish = "build"
-  functionsPort = 9999
