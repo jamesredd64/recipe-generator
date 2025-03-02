@@ -1,5 +1,5 @@
 [build]
-  base = "/"
+  base = ""  # Leave empty to use repository root
   command = "npm run build"
   publish = "build"
   functions = "netlify/functions"
