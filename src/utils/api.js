@@ -1,21 +1,27 @@
-const API_BASE = process.env.NODE_ENV === 'development'
-  ? 'http://localhost:8000/.netlify/functions/api'
+export const API_BASE = process.env.NODE_ENV === 'development'
+  ? 'http://localhost:9999/.netlify/functions/api'
   : '/.netlify/functions/api';
 
 export const callApi = async (endpoint, options = {}) => {
-  const response = await fetch(`${API_BASE}${endpoint}`, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
+  try {
+    const response = await fetch(`${API_BASE}${endpoint}`, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
+    });
 
-  if (!response.ok) {
-    throw new Error(`API call failed: ${response.statusText}`);
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.error || `HTTP error! status: ${response.status}`);
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error('API call error:', error);
+    throw error;
   }
-
-  return response.json();
 };
 
 // Example usage:

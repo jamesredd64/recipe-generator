@@ -25,7 +25,7 @@
 
 [dev]
   command = "npm run start"
-  port = 8000
+  port = 9999
   targetPort = 3000
   publish = "build"
   functionsPort = 9999

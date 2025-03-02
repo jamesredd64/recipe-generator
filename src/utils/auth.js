@@ -1,5 +1,6 @@
 import { auth } from '../firebaseConfig.jsx';
 import { signInWithCustomToken, signOut } from 'firebase/auth';
+import { API_BASE } from './api';
 
 let tokenRefreshTimeout;
 
@@ -9,19 +10,12 @@ export const setupTokenRefresh = async (isAdmin = false) => {
   }
 
   try {
-    const idToken = await auth.currentUser?.getIdToken(true); // Force refresh
+    const idToken = await auth.currentUser?.getIdToken(true);
     if (!idToken) {
       throw new Error('No ID token available');
     }
 
-    // Use Netlify Functions URL instead of Firebase Functions
-    const apiUrl = process.env.NODE_ENV === 'development'
-      ? 'http://localhost:8888/.netlify/functions/api/createCustomToken'
-      : '/.netlify/functions/api/createCustomToken';
-
-    console.log('Requesting custom token from:', apiUrl);
-
-    const response = await fetch(apiUrl, {
+    const response = await fetch(`${API_BASE}/createCustomToken`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -43,22 +37,19 @@ export const setupTokenRefresh = async (isAdmin = false) => {
     await signInWithCustomToken(auth, data.token);
     console.log('Successfully signed in with custom token');
 
-    // Set up refresh timeout
     tokenRefreshTimeout = setTimeout(() => {
       setupTokenRefresh(isAdmin).catch(console.error);
-    }, 9 * 60 * 1000); // Refresh slightly before expiration
+    }, 9 * 60 * 1000);
   } catch (error) {
     console.error('Error refreshing token:', error);
 
-    // Don't sign out for network errors
     if (error.message.includes('Failed to fetch')) {
       console.log('Network error - will retry on next attempt');
       return;
     }
 
-    // For other errors, sign out the user
     await signOut(auth);
-    throw error; // Re-throw to be handled by the caller
+    throw error;
   }
 };
 

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Link, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { signOut, onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebaseConfig.jsx';
+// import { callApi } from './utils/api';
 import {
   Box,
   Flex,
@@ -62,10 +63,7 @@ function App() {
       }
     });
 
-    return () => {
-      unsubscribe();
-      clearTokenRefresh();
-    };
+    return () => unsubscribe();
   }, []);
 
   if (loading) {

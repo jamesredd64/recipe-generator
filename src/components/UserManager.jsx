@@ -50,7 +50,7 @@ function UserManager() {
     try {
       const response = await fetch(
         process.env.NODE_ENV === 'development'
-          ? 'http://localhost:8000/.netlify/functions/api/getUserByEmail'
+          ? 'http://localhost:9999/.netlify/functions/api/getUserByEmail'
           : '/.netlify/functions/api/getUserByEmail',
         {
           method: 'POST',
@@ -69,7 +69,7 @@ function UserManager() {
 
       setUserData(data);
     } catch (error) {
-      console.error('Search error:', error); // Debug log
+      console.error('Search error:', error);
       toast({
         title: 'Error',
         description: error.message,
