@@ -23,7 +23,7 @@ export function AuthProvider({ children }) {
 
     netlifyIdentity.on('login', handleLogin);
     netlifyIdentity.on('logout', handleLogout);
-    netlifyIdentity.on('init', user => {
+    netlifyIdentity.on('init', (user) => {
       if (user) {
         handleLogin(user);
       }
@@ -53,7 +53,7 @@ export function AuthProvider({ children }) {
     },
     login: () => {
       netlifyIdentity.open('login');
-    }
+    },
   };
 
   return (
