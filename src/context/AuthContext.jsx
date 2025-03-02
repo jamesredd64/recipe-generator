@@ -9,18 +9,11 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    netlifyIdentity.init({
-      APIUrl: process.env.REACT_APP_NETLIFY_IDENTITY_URL
-    });
+    netlifyIdentity.init();
 
     const handleLogin = async (user) => {
       setUser(user);
-      try {
-        // Set up token refresh if needed
-        await setupTokenRefresh(user.app_metadata?.roles?.includes('admin') || false);
-      } catch (error) {
-        console.error('Error setting up token refresh:', error);
-      }
+      await setupTokenRefresh(user);
     };
 
     const handleLogout = () => {
@@ -34,6 +27,7 @@ export function AuthProvider({ children }) {
       if (user) {
         handleLogin(user);
       }
+      setLoading(false);
     });
 
     // Check if user is already logged in
@@ -41,8 +35,6 @@ export function AuthProvider({ children }) {
     if (currentUser) {
       handleLogin(currentUser);
     }
-
-    setLoading(false);
 
     return () => {
       netlifyIdentity.off('login');
