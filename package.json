@@ -3,10 +3,25 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "scripts": {
+    "start": "set PORT=3012 && react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "dev": "netlify dev --targetPort 3012",
+    "netlify-dev": "netlify dev",
+    "check-webpack": "node scripts/check-webpack.js",
+    "lint": "eslint src/**/*.{js,jsx}",
+    "lint:fix": "eslint src/**/*.{js,jsx} --fix",
+    "format": "prettier --write src/**/*.{js,jsx,css,md}",
+    "serve": "serve -s build",
+    "analyze": "source-map-explorer 'build/static/js/*.js'"
+  },
   "dependencies": {
     "@chakra-ui/react": "^2.10.6",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "@genkit-ai/googleai": "1.0.5",
     "@mui/material": "^5.14.18",
     "@testing-library/dom": "^9.3.3",
     "@testing-library/jest-dom": "^5.17.0",
@@ -15,6 +30,7 @@
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "framer-motion": "^10.18.0",
+    "genkit": "1.0.5",
     "jsonwebtoken": "^9.0.2",
     "netlify-cli": "^17.37.0-rc-redirect.0",
     "netlify-identity-widget": "^1.9.2",
@@ -24,5 +40,24 @@
     "react-scripts": "^5.0.1",
     "serverless-http": "^3.2.0",
     "web-vitals": "^2.1.4"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "eslint": "^8.0.0",
+    "prettier": "^2.8.8",
+    "serve": "^14.0.0",
+    "source-map-explorer": "^2.5.3"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
