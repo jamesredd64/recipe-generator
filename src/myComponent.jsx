@@ -1,8 +1,7 @@
-import React, { useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+// import { useNavigate } from 'react-router-dom';
 import {
   Input,
-  Text,
   Card,
   CardBody,
   Container,
@@ -15,19 +14,19 @@ import {
 import './styles/theme.css';
 
 function MyComponent() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(null);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const handleSignUp = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
       // Implement Netlify Identity or custom auth here
-      setSuccess("Account created successfully!");
+      setSuccess('Account created successfully!');
       setError(null);
     } catch (error) {
       setError(error.message);
@@ -42,7 +41,7 @@ function MyComponent() {
     setLoading(true);
     try {
       // Implement Netlify Identity or custom auth here
-      setSuccess("Signed in successfully!");
+      setSuccess('Signed in successfully!');
       setError(null);
     } catch (error) {
       setError(error.message);
@@ -67,10 +66,10 @@ function MyComponent() {
                 bg="licorice.300"
                 border="1px solid"
                 borderColor="licorice.600"
-                _hover={{ bg: "licorice.300" }}
+                _hover={{ bg: 'licorice.300' }}
                 _focus={{
-                  bg: "licorice.300",
-                  borderColor: "chestnut.600"
+                  bg: 'licorice.300',
+                  borderColor: 'chestnut.600',
                 }}
               />
               <Input
@@ -82,10 +81,10 @@ function MyComponent() {
                 bg="licorice.300"
                 border="1px solid"
                 borderColor="licorice.600"
-                _hover={{ bg: "licorice.300" }}
+                _hover={{ bg: 'licorice.300' }}
                 _focus={{
-                  bg: "licorice.300",
-                  borderColor: "chestnut.600"
+                  bg: 'licorice.300',
+                  borderColor: 'chestnut.600',
                 }}
               />
 
