@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import netlifyIdentity from 'netlify-identity-widget';
 import {
   Container,
   Card,
@@ -12,15 +11,13 @@ import {
   AlertIcon,
   Text,
 } from '@chakra-ui/react';
+import { useAuth } from '../context/AuthContext';
 
 function SignIn() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
-  React.useEffect(() => {
-    netlifyIdentity.init();
-  }, []);
+  const { login } = useAuth();
 
   const handleSignIn = async (e) => {
     e.preventDefault();
@@ -28,11 +25,8 @@ function SignIn() {
     setError(null);
 
     try {
-      await netlifyIdentity.open();
-      netlifyIdentity.on('login', user => {
-        netlifyIdentity.close();
-        navigate('/');
-      });
+      login();
+      // The redirect will be handled by the AuthContext login handler
     } catch (error) {
       setError(error.message);
     } finally {

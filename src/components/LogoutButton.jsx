@@ -1,16 +1,15 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import netlifyIdentity from 'netlify-identity-widget';
 import { Button } from '@chakra-ui/react';
+import { useAuth } from '../context/AuthContext';
 
 function LogoutButton() {
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   const handleLogout = () => {
-    netlifyIdentity.logout();
-    netlifyIdentity.on('logout', () => {
-      navigate('/signin');
-    });
+    logout();
+    navigate('/signin');
   };
 
   return (
