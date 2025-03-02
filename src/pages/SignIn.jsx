@@ -1,27 +1,26 @@
 import React, { useState } from 'react';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebaseConfig';
 import { useNavigate } from 'react-router-dom';
+import netlifyIdentity from 'netlify-identity-widget';
 import {
   Container,
   Card,
   CardBody,
-  Input,
   Button,
   VStack,
   Heading,
   Alert,
   AlertIcon,
-  FormControl,
-  FormLabel,
+  Text,
 } from '@chakra-ui/react';
 
 function SignIn() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    netlifyIdentity.init();
+  }, []);
 
   const handleSignIn = async (e) => {
     e.preventDefault();
@@ -29,27 +28,13 @@ function SignIn() {
     setError(null);
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      navigate('/');
+      await netlifyIdentity.open();
+      netlifyIdentity.on('login', user => {
+        netlifyIdentity.close();
+        navigate('/');
+      });
     } catch (error) {
-      let errorMessage = 'An error occurred during sign in';
-      switch (error.code) {
-        case 'auth/invalid-email':
-          errorMessage = 'Invalid email address';
-          break;
-        case 'auth/user-disabled':
-          errorMessage = 'This account has been disabled';
-          break;
-        case 'auth/user-not-found':
-          errorMessage = 'No account found with this email';
-          break;
-        case 'auth/wrong-password':
-          errorMessage = 'Incorrect password';
-          break;
-        default:
-          errorMessage = error.message;
-      }
-      setError(errorMessage);
+      setError(error.message);
     } finally {
       setLoading(false);
     }
@@ -70,42 +55,29 @@ function SignIn() {
 
         <Card variant="elevated" bg="licorice.400">
           <CardBody>
-            <VStack as="form" spacing={6} onSubmit={handleSignIn}>
+            <VStack spacing={6}>
               <Heading size="md" color="white" fontWeight="500">
                 Sign in to your account
               </Heading>
 
-              <FormControl isRequired>
-                <FormLabel color="white">Email</FormLabel>
-                <Input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
-                  bg="white"
-                  color="black"
-                />
-              </FormControl>
-
-              <FormControl isRequired>
-                <FormLabel color="white">Password</FormLabel>
-                <Input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
-                  bg="white"
-                  color="black"
-                />
-              </FormControl>
+              <Text color="gray.300" textAlign="center">
+                Click below to sign in with GitHub
+              </Text>
 
               <Button
-                type="submit"
-                colorScheme="blue"
+                onClick={handleSignIn}
                 width="full"
+                size="lg"
                 isLoading={loading}
+                loadingText="Signing in"
+                colorScheme="gray"
+                leftIcon={
+                  <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
+                    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+                  </svg>
+                }
               >
-                Sign In
+                Sign in with GitHub
               </Button>
 
               {error && (

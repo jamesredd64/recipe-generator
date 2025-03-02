@@ -1,46 +1,35 @@
-import React, { useState } from "react";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebaseConfig";
-import { useNavigate } from "react-router-dom";
-import {  
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import netlifyIdentity from 'netlify-identity-widget';
+import {
   Container,
   Card,
   CardBody,
   Input,
   Button,
   VStack,
-  Heading,  
+  Heading,
   Alert,
   AlertIcon,
   FormControl,
   FormLabel,
   FormErrorMessage,
-} from "@chakra-ui/react";
+} from '@chakra-ui/react';
 
 function SignUp() {
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    confirmPassword: ""
+    email: '',
+    password: '',
+    confirmPassword: ''
   });
   const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const validateEmail = (email) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(String(email).toLowerCase());
-  };
-
-  const validatePassword = (password) => {
-    const errors = [];
-    if (password.length < 6) errors.push("Password must be at least 6 characters long");
-    if (!/\d/.test(password)) errors.push("Password must contain at least one number");
-    if (!/[A-Z]/.test(password)) errors.push("Password must contain at least one uppercase letter");
-    if (!/[a-z]/.test(password)) errors.push("Password must contain at least one lowercase letter");
-    return errors;
-  };
+  React.useEffect(() => {
+    netlifyIdentity.init();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -48,33 +37,45 @@ function SignUp() {
       ...prev,
       [name]: value
     }));
-    
-    // Clear errors when user starts typing
-    setErrors(prev => ({
-      ...prev,
-      [name]: null
-    }));
+  };
+
+  const validateEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  const validatePassword = (password) => {
+    const errors = [];
+    if (password.length < 8) {
+      errors.push('Password must be at least 8 characters long');
+    }
+    if (!/[A-Z]/.test(password)) {
+      errors.push('Password must contain at least one uppercase letter');
+    }
+    if (!/[a-z]/.test(password)) {
+      errors.push('Password must contain at least one lowercase letter');
+    }
+    if (!/[0-9]/.test(password)) {
+      errors.push('Password must contain at least one number');
+    }
+    return errors;
   };
 
   const validateForm = () => {
     const newErrors = {};
 
-    // Email validation
     if (!formData.email) {
-      newErrors.email = "Email is required";
+      newErrors.email = 'Email is required';
     } else if (!validateEmail(formData.email)) {
-      newErrors.email = "Invalid email format";
+      newErrors.email = 'Invalid email format';
     }
 
-    // Password validation
     const passwordErrors = validatePassword(formData.password);
     if (passwordErrors.length > 0) {
       newErrors.password = passwordErrors;
     }
 
-    // Confirm password validation
     if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
+      newErrors.confirmPassword = 'Passwords do not match';
     }
 
     setErrors(newErrors);
@@ -91,26 +92,13 @@ function SignUp() {
 
     setLoading(true);
     try {
-      await createUserWithEmailAndPassword(auth, formData.email, formData.password);
-      navigate("/login");
+      await netlifyIdentity.open('signup');
+      netlifyIdentity.on('signup', user => {
+        netlifyIdentity.close();
+        navigate('/login');
+      });
     } catch (error) {
-      // Handle specific Firebase auth errors
-      switch (error.code) {
-        case 'auth/email-already-in-use':
-          setSubmitError("This email is already registered");
-          break;
-        case 'auth/invalid-email':
-          setSubmitError("Invalid email format");
-          break;
-        case 'auth/operation-not-allowed':
-          setSubmitError("Email/password accounts are not enabled");
-          break;
-        case 'auth/weak-password':
-          setSubmitError("Password is too weak");
-          break;
-        default:
-          setSubmitError(error.message);
-      }
+      setSubmitError(error.message);
     } finally {
       setLoading(false);
     }
@@ -165,10 +153,8 @@ function SignUp() {
                 />
                 {errors.password && (
                   <FormErrorMessage>
-                    {Array.isArray(errors.password) 
-                      ? errors.password.map((err, idx) => (
-                          <div key={idx}>{err}</div>
-                        ))
+                    {Array.isArray(errors.password)
+                      ? errors.password.join(', ')
                       : errors.password}
                   </FormErrorMessage>
                 )}
@@ -203,7 +189,7 @@ function SignUp() {
               </Button>
 
               {submitError && (
-                <Alert status="error" borderRadius="md">
+                <Alert status="error">
                   <AlertIcon />
                   {submitError}
                 </Alert>
