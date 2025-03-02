@@ -9,12 +9,7 @@
 /coverage
 
 # production
-# /build
-
-# Netlify
-.netlify
-netlify/functions-internal
-netlify/functions-serve
+/build
 
 # misc
 .DS_Store
@@ -23,17 +18,17 @@ netlify/functions-serve
 .env.development.local
 .env.test.local
 .env.production.local
-.env.netlify
 
-# debug logs
+# debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Firebase
-.firebase/
-service-Key.json
-users.json
+# Local Netlify folder
+.netlify
 
-# Netlify
-# .netlify
+# Source maps
+**/*.map
+
+# Cache
+.cache

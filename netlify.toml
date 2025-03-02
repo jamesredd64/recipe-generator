@@ -3,6 +3,24 @@
   publish = "build"
   functions = "netlify/functions"
 
+# Disable asset optimization since Create React App already handles this
+[build.processing]
+  skip_processing = true
+
+[build.processing.css]
+  bundle = false
+  minify = false
+
+[build.processing.js]
+  bundle = false
+  minify = false
+
+[build.processing.html]
+  pretty_urls = true
+
+[build.processing.images]
+  compress = false
+
 # Add this new Identity specific redirect
 [[redirects]]
   from = "/.netlify/identity/*"
