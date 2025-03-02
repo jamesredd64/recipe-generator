@@ -18,17 +18,8 @@ export function AuthProvider({ children }) {
   const toast = useToast();
 
   useEffect(() => {
-    // Initialize Netlify Identity with allowed URLs
-    netlifyIdentity.init({
-      APIUrl: '/.netlify/identity',
-      allowedURLs: [
-        'http://localhost:3000',
-        'http://127.0.0.1:3000',
-        window.location.origin // This adds your production URL automatically
-      ]
-    });
-
-    console.log('Netlify Identity initialized with development URLs');
+    // Initialize Netlify Identity without specifying APIUrl
+    netlifyIdentity.init();
 
     // Set up event listeners
     netlifyIdentity.on('login', (user) => {
@@ -98,7 +89,7 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 }

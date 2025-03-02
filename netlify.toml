@@ -3,6 +3,13 @@
   publish = "build"
   functions = "netlify/functions"
 
+# Add this new Identity specific redirect
+[[redirects]]
+  from = "/.netlify/identity/*"
+  to = "/.netlify/identity/:splat"
+  status = 200
+  force = true
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
@@ -19,26 +26,36 @@
   node_bundler = "esbuild"
 
 [dev]
-  targetPort = 3000
+  targetPort = 3012
   port = 8888
+  publish = "public"
+  functionsPort = 8887
+
+[[redirects]]
+  from = "/.netlify/identity/*"
+  to = "/.netlify/identity/:splat"
+  status = 200
+  force = true
 
 # Development URLs configuration
 [[redirects]]
-  from = "http://localhost:3000/*"
+  from = "http://localhost:3012/*"
   to = "/.netlify/identity/:splat"
   status = 200
+  force = true
 
 [[redirects]]
-  from = "http://127.0.0.1:3000/*"
+  from = "http://127.0.0.1:3012/*"
   to = "/.netlify/identity/:splat"
   status = 200
+  force = true
 
 [[headers]]
-  for = "http://localhost:3000/*"
+  for = "http://localhost:3012/*"
     [headers.values]
-    Access-Control-Allow-Origin = "http://localhost:3000"
+    Access-Control-Allow-Origin = "http://localhost:3012"
 
 [[headers]]
-  for = "http://127.0.0.1:3000/*"
+  for = "http://127.0.0.1:3012/*"
     [headers.values]
-    Access-Control-Allow-Origin = "http://127.0.0.1:3000"
+    Access-Control-Allow-Origin = "http://127.0.0.1:3012"

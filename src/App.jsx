@@ -16,9 +16,10 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import Home from './pages/Home.jsx';
 import SignUp from './pages/SignUp.jsx';
 import SignIn from './pages/SignIn.jsx';
+import RecipeGenerator from './pages/RecipeGenerator.jsx';
 
 function NavigationBar() {
-  const { isAuthenticated, login, logout } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
 
   return (
     <Box
@@ -28,25 +29,36 @@ function NavigationBar() {
       py={4}
       position="sticky"
       top={0}
-      zIndex={1000}
-      width="100%"
+      zIndex="sticky"
     >
       <Container maxW="container.xl">
         <Flex justify="space-between" align="center">
-          <Text fontSize="xl" fontWeight="bold">My App</Text>
+          <HStack spacing={4}>
+            <Link to="/">
+              <Text fontSize="xl" fontWeight="bold">
+                Home
+              </Text>
+            </Link>
+            {isAuthenticated && (
+              <Link to="/recipe-generator">
+                <Text fontSize="xl">Recipe Generator</Text>
+              </Link>
+            )}
+          </HStack>
 
           <HStack spacing={4}>
-            <Button as={Link} to="/" variant="ghost" color="white">
-              Home
-            </Button>
-
-            {isAuthenticated ? (
-              <Button onClick={logout} colorScheme="red">
-                Logout
-              </Button>
+            {!isAuthenticated ? (
+              <>
+                <Link to="/signin">
+                  <Button variant="ghost">Sign In</Button>
+                </Link>
+                <Link to="/signup">
+                  <Button colorScheme="whiteAlpha">Sign Up</Button>
+                </Link>
+              </>
             ) : (
-              <Button onClick={login} colorScheme="whiteAlpha">
-                Login
+              <Button onClick={logout} variant="ghost">
+                Sign Out
               </Button>
             )}
           </HStack>
@@ -68,6 +80,7 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/signin" element={<SignIn />} />
+                <Route path="/recipe-generator" element={<RecipeGenerator />} />
               </Routes>
             </Container>
           </Box>
