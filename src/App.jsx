@@ -6,75 +6,48 @@ import {
   Text,
   Container,
   ChakraProvider,
-  Image,
   Button,
   HStack,
 } from '@chakra-ui/react';
 import theme from './styles/theme';
-import reactLogo from '../src/assets/reactlogo.webp';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import LogoutButton from './components/LogoutButton';
 
 // Import page components
 import Home from './pages/Home.jsx';
 import SignUp from './pages/SignUp.jsx';
 import SignIn from './pages/SignIn.jsx';
-// import UserManager from './components/UserManager';
 
 function NavigationBar() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, login, logout } = useAuth();
 
   return (
-    <Box as="nav" bg="licorice.400" py={4}>
+    <Box
+      as="nav"
+      bg="blue.600"
+      color="white"
+      py={4}
+      position="sticky"
+      top={0}
+      zIndex={1000}
+      width="100%"
+    >
       <Container maxW="container.xl">
-        <Flex align="center" justify="space-between">
-          <Flex align="center">
-            <Image
-              src={reactLogo}
-              alt="React Logo"
-              h="50px"
-              w="auto"
-              mr={4}
-              objectFit="contain"
-            />
-            <Text fontSize="xl" fontWeight="500">
-              My React App
-            </Text>
-          </Flex>
+        <Flex justify="space-between" align="center">
+          <Text fontSize="xl" fontWeight="bold">My App</Text>
 
           <HStack spacing={4}>
-            <Button
-              as={Link}
-              to="/"
-              variant="ghost"
-              _hover={{ bg: 'licorice.300' }}
-            >
+            <Button as={Link} to="/" variant="ghost" color="white">
               Home
             </Button>
+
             {isAuthenticated ? (
-              <>
-                <Button
-                  as={Link}
-                  to="/home"
-                  variant="ghost"
-                  _hover={{ bg: 'licorice.300' }}
-                >
-                  Users
-                </Button>
-                <LogoutButton />
-              </>
+              <Button onClick={logout} colorScheme="red">
+                Logout
+              </Button>
             ) : (
-              <>
-                <Button
-                  as={Link}
-                  to="/signin"
-                  colorScheme="chestnut"
-                  bg="chestnut.600"
-                  _hover={{ bg: 'chestnut.700' }}
-                >
-                  Sign In
-                </Button>
-              </>
+              <Button onClick={login} colorScheme="whiteAlpha">
+                Login
+              </Button>
             )}
           </HStack>
         </Flex>
@@ -87,17 +60,18 @@ function App() {
   return (
     <ChakraProvider theme={theme}>
       <AuthProvider>
-        <Box bg="licorice.500" color="white" minH="100vh">
-          <BrowserRouter>
+        <BrowserRouter>
+          <Box minH="100vh">
             <NavigationBar />
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/signup" element={<SignUp />} />
-              <Route path="/signin" element={<SignIn />} />
-              <Route path="/home" element={<Home />} />
-            </Routes>
-          </BrowserRouter>
-        </Box>
+            <Container maxW="container.xl" py={8}>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/signup" element={<SignUp />} />
+                <Route path="/signin" element={<SignIn />} />
+              </Routes>
+            </Container>
+          </Box>
+        </BrowserRouter>
       </AuthProvider>
     </ChakraProvider>
   );

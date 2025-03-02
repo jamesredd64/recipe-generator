@@ -9,13 +9,13 @@ function LogoutButton() {
 
   const handleLogout = () => {
     logout();
-    navigate('/signin');
+    navigate('/');
   };
 
   return (
     <Button
       onClick={handleLogout}
-      colorScheme="gray"
+      colorScheme="red"
       variant="outline"
     >
       Sign Out
