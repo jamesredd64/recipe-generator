@@ -23,12 +23,6 @@
 
 # Add this new Identity specific redirect
 [[redirects]]
-  from = "/.netlify/identity/*"
-  to = "/.netlify/identity/:splat"
-  status = 200
-  force = true
-
-[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
@@ -49,22 +43,16 @@
   publish = "public"
   functionsPort = 8887
 
-[[redirects]]
-  from = "/.netlify/identity/*"
-  to = "/.netlify/identity/:splat"
-  status = 200
-  force = true
-
 # Development URLs configuration
 [[redirects]]
   from = "http://localhost:3012/*"
-  to = "/.netlify/identity/:splat"
+  to = "/index.html"
   status = 200
   force = true
 
 [[redirects]]
   from = "http://127.0.0.1:3012/*"
-  to = "/.netlify/identity/:splat"
+  to = "/index.html"
   status = 200
   force = true
 
